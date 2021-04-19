@@ -1,14 +1,14 @@
 
 // Include Libraries
 #include "Arduino.h"
-#include "Lib/Buzzer.h"
-#include "Lib/HCSR04.h"
-#include "Lib/LED.h"
+#include "src/Lib/Buzzer.h"
+#include "src/Lib/HCSR04.h"
+#include "src/Lib/LED.h"
 #include "Wire.h"
 #include "SPI.h"
-#include "Lib/Adafruit_SSD1306.h"
-#include "Lib/Adafruit_MLX90614.h"
-#include "Lib/Adafruit_GFX.h"
+#include "src/Lib/Adafruit_SSD1306.h"
+#include "src/Lib/Adafruit_MLX90614.h"
+#include "src/Lib/Adafruit_GFX.h"
 
 
 // Pin Definitions
@@ -29,7 +29,7 @@ Buzzer buzzer(BUZZER_PIN_SIG);
 HCSR04 ultrasonic(HCSR04_PIN_TRIG,HCSR04_PIN_ECHO);
 Led ledG(LEDG_PIN_VIN);
 Led ledR(LEDR_PIN_VIN);
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RST);
+Adafruit_SSD1306 display(OLED_RST);
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 // define vars for testing menu
@@ -39,7 +39,7 @@ double calibration = 2.36;
 double limit = 38.0;
 char menuOption = 0;
 long time0;
-int measureDistance = 10;
+int maxDistance = 10;
 
 // Setup the essentials for your circuit to work. It runs first every time your circuit is powered with electricity.
 void setup() 
@@ -51,11 +51,9 @@ void setup()
     mlx.begin(); 
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  //initialize with the I2C addr 0x3C (128x64)
     
-    Serial.println("Temperature sensor and display initialized")
+    Serial.println("Temperature sensor and display initialized");
     
     // Setup display
-    display.clearDisplay();
-    oLed128x32.display();
     display.clearDisplay();
     display.setCursor(25,15);  
     display.setTextSize(1);
@@ -98,7 +96,7 @@ void loop()
         display.println("Error: Temperatura ambiente muy alta");
       }
 
-      continue;
+      return;
     }
 
     display.clearDisplay();
@@ -115,7 +113,7 @@ void loop()
     display.println("Esperando...");
 
     while(ultrasonic.distance() > maxDistance) {
-      Serial.prinln("Waiting...");
+      Serial.println("Waiting...");
     }
   
     display.setCursor(10,40);
@@ -148,6 +146,6 @@ void loop()
       display.setTextSize(1);
       display.println("Su temperatura está muy alta");
 
-      continue;
+      return;
     }
 }

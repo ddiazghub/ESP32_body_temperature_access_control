@@ -1,3 +1,4 @@
+// Include variable definitions header file
 #include "defines.h"
 
 // Print line to display with position (x, y).

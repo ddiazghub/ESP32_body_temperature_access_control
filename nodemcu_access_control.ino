@@ -1,7 +1,9 @@
-// Include setup header file
+// Include function definition header file which already includes the program variable definitions.
 #include "functions.h"
 
-// Setup.
+// Main program, includes setup and main loop functions.
+
+// Setup
 void setup() 
 {
     Serial.begin(9600);
@@ -28,7 +30,7 @@ void loop() {
       printTemperature(10, 40, 3, temp_amb);
 
 
-      // If room temperature is higher than the threshold display err message.
+      // If room temperature is higher than the threshold display error message.
       if (temp_amb > threshold) {
         ledR.on();
         buzzer.on();
@@ -38,23 +40,24 @@ void loop() {
       return;
     }
 
+    // Read from serial buffer, return if different from trigger char.
     byte serialInput = Serial.read();
     if (!serialInput == trigger) {
       return;
     };
 
-    // Ask person to stand at 10 cm or less from sensor.
+    // Ask person to stand at a distance not higher than 10 cm from sensor.
     display.clearDisplay();
     printToDisplay(10, 20, 1, " Posicionese a máximo ");
     printToDisplay(10, 30, 1, maxDistance + "cm del sensor.");
 
-
-    // Wait
+    // Wait.
     printToDisplay(10,50, 1, "Esperando...");
     while(ultrasonic.distance() > maxDistance) {
 
     };
 
+    // Count 3 seconds and take temperature, if person moved ouut of range notify and return.
     countdown(3, 45, 50, 1);
     if (ultrasonic.distance() > maxDistance) {
       display.clearDisplay();
@@ -64,7 +67,7 @@ void loop() {
     };
 
     
-    // Take temperature and send to RFID system.
+    // Take temperature, show on display and send to RFID system.
     temp_body = mlx.readObjectTempC();
     Serial.print(temp_body);
 
@@ -73,7 +76,7 @@ void loop() {
     printTemperature(10, 40, 3, temp_body);
 
 
-    // If temperature is over threshold light red LED, trigger buzzer, and print alert.
+    // If temperature is over threshold, light red LED, trigger buzzer, and print alert.
     if (temp_body > threshold) {
       ledR.on();
       buzzer.on();
@@ -83,6 +86,7 @@ void loop() {
       return;
     }
 
+    // If temperature is below threshold, grant access.
     ledG.on();
     printToDisplay(25, 53, 1, "Bienvenido");
     openDoor();

@@ -31,9 +31,9 @@
 double temp_amb;
 double temp_body;           // Vars for storing ambient and body temperature
 double calibration = 2.36;  // Idk
-double threshold = 38.0;        // Temperature threshold for denying access
+double threshold = 38.0;    // Temperature threshold for denying access
 int maxDistance = 10;       // Max distance for taking temperature
-byte trigger = 't';       // Trigger
+byte trigger = 't';         // Trigger
 
 // object initialization
 Buzzer buzzer(BUZZER_PIN_SIG);

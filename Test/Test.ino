@@ -8,6 +8,7 @@
 #include "SPI.h"
 #include "Adafruit_SSD1306.h"
 #include "Adafruit_GFX.h"
+#include "Servo.h"
 
 
 // Pin Definitions
@@ -17,11 +18,13 @@
 #define LEDG_PIN_VIN	14
 #define LEDR_PIN_VIN	12
 #define OLED128X32_PIN_RST	15
+#define SERVOSM_PIN_SIG	16
 
 
 
 // Global variables and defines
-
+const int servoSMRestPosition   = 20;  //Starting position
+const int servoSMTargetPosition = 150; //Position when event is detected
 // object initialization
 Buzzer buzzer(BUZZER_PIN_SIG);
 NewPing hcsr04(HCSR04_PIN_TRIG,HCSR04_PIN_ECHO);
@@ -29,6 +32,7 @@ LED ledG(LEDG_PIN_VIN);
 LED ledR(LEDR_PIN_VIN);
 #define SSD1306_LCDHEIGHT 32
 Adafruit_SSD1306 oLed128x32(OLED128X32_PIN_RST);
+Servo servoSM;
 
 
 // define vars for testing menu
@@ -48,6 +52,10 @@ void setup()
     oLed128x32.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x32)
     oLed128x32.clearDisplay(); // Clear the buffer.
     oLed128x32.display();
+    servoSM.attach(SERVOSM_PIN_SIG);
+    servoSM.write(servoSMRestPosition);
+    delay(100);
+    servoSM.detach();
     menuOption = menu();
     
 }
@@ -114,6 +122,16 @@ void loop()
     delay(2000);
     oLed128x32.stopscroll();
     }
+    else if(menuOption == '7') {
+    // Servo - Generic Metal Gear (Micro Size) - Test Code
+    // The servo will rotate to target position and back to resting position with an interval of 500 milliseconds (0.5 seconds) 
+    servoSM.attach(SERVOSM_PIN_SIG);         // 1. attach the servo to correct pin to control it.
+    servoSM.write(servoSMTargetPosition);  // 2. turns servo to target position. Modify target position by modifying the 'ServoTargetPosition' definition above.
+    delay(500);                              // 3. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoSM.write(servoSMRestPosition);    // 4. turns servo back to rest position. Modify initial position by modifying the 'ServoRestPosition' definition above.
+    delay(500);                              // 5. waits 500 milliseconds (0.5 sec). change the value in the brackets (500) for a longer or shorter delay in milliseconds.
+    servoSM.detach();                    // 6. release the servo to conserve power. When detached the servo will NOT hold it's position under stress.
+    }
     
     if (millis() - time0 > timeout)
     {
@@ -136,6 +154,7 @@ char menu()
     Serial.println(F("(4) LED - Basic Red 5mm"));
     Serial.println(F("(5) Infrared Thermometer - MLX90614"));
     Serial.println(F("(6) Monochrome 128x32 I2C OLED graphic display"));
+    Serial.println(F("(7) Servo - Generic Metal Gear (Micro Size)"));
     Serial.println(F("(menu) send anything else or press on board reset button\n"));
     while (!Serial.available());
 
@@ -158,6 +177,8 @@ char menu()
     			Serial.println(F("Now Testing Infrared Thermometer - MLX90614 - note that this component doesn't have a test code"));
     		else if(c == '6') 
     			Serial.println(F("Now Testing Monochrome 128x32 I2C OLED graphic display"));
+    		else if(c == '7') 
+    			Serial.println(F("Now Testing Servo - Generic Metal Gear (Micro Size)"));
             else
             {
                 Serial.println(F("illegal input!"));

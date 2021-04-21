@@ -20,11 +20,14 @@ void setup()
 
 // Main
 void loop() {
+    ledR.off();
+    ledG.off();
+    buzzer.off();
+    display.clearDisplay();
+
     // If trigger not received display room temperature continously.
     if (!Serial.available()) {
       temp_amb = mlx.readAmbientTempC();
-
-      display.clearDisplay();
       
       printToDisplay(10, 0, 1, "Temperatura ambiente:");
       printTemperature(10, 40, 3, temp_amb);

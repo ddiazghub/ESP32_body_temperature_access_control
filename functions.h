@@ -38,5 +38,7 @@ void countdown(int seconds, byte x, byte y, byte size) {
 }
 
 void openDoor() {
-
+  servo.write(145);
+  countdown(5, 25, 30, 2);
+  servo.write(0);
 }

@@ -1,5 +1,4 @@
 #include "Led.h"
-#include "Arduino.h"
 Led::Led(byte pinIn) : pin(pinIn) {
   init();
 }

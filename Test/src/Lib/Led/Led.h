@@ -1,13 +1,13 @@
-#ifndef BUZZER_H
-#define BUZZER_H
+#ifndef LED_H
+#define LED_H
 #include <Arduino.h>
-class Buzzer {
+class Led {
 
   private:
     byte pin;
 
   public:
-    Buzzer(byte pin);
+    Led(byte pin);
     void init();
     void on();
     void off();
